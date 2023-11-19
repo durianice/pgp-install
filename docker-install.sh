@@ -246,4 +246,60 @@ reinstall_pager () {
     data_persistence
 }
 
+shon_online () {
+    echo "一键脚本出现任何问题请转手动搭建！ xtaolabs.com"
+    echo "一键脚本出现任何问题请转手动搭建！ xtaolabs.com"
+    echo "一键脚本出现任何问题请转手动搭建！ xtaolabs.com"
+    echo ""
+    echo ""
+    echo "欢迎使用 PagerMaid-Pyro Docker 一键安装脚本。"
+    echo
+    echo "请选择您需要进行的操作:"
+    echo "  1) Docker 安装 PagerMaid"
+    echo "  2) Docker 卸载 PagerMaid"
+    echo "  3) Docker 关闭 PagerMaid"
+    echo "  4) Docker 启动 PagerMaid"
+    echo "  5) Docker 重启 PagerMaid"
+    echo "  6) Docker 重装 PagerMaid"
+    echo "  7) 持久化数据"
+    echo "  8) 退出脚本"
+    echo
+    echo "     Version：2.2.0"
+    echo
+    echo -n "请输入编号: "
+    read -r N <&1
+    case $N in
+        1)
+            start_installation
+            ;;
+        2)
+            cleanup
+            ;;
+        3)
+            stop_pager
+            ;;
+        4)
+            start_pager
+            ;;
+        5)
+            restart_pager
+            ;;
+        6)
+            reinstall_pager
+            ;;
+        7)
+            data_persistence
+            ;;
+        8)
+            exit 0
+            ;;
+        *)
+            echo "Wrong input!"
+            sleep 5s
+            shon_online
+            ;;
+    esac 
+}
+
 shon_online
+
