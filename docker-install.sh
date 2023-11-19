@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+external_port=3333  # 默认端口为3333
+
 if [[ $EUID -ne 0 ]]; then
     echo "错误：本脚本需要 root 权限执行。" 1>&2
     exit 1
@@ -52,23 +54,27 @@ build_docker () {
 }
 
 need_web () {
-  PGM_WEB=false
-  printf "请问是否需要启用 Web 管理界面 [Y/n] ："
-  read -r web <&1
-  case $web in
-      [yY][eE][sS] | [yY])
-          echo "您已确认需要启用 Web 管理界面 . . ."
-          PGM_WEB=true
-          printf "请输入管理员密码（如果不需要密码请直接回车）："
-          read -r admin_password <&1
-          ;;
-      [nN][oO] | [nN])
-          ;;
-      *)
-          echo "输入错误，已跳过。"
-          ;;
-  esac
+    PGM_WEB=false
+    printf "请问是否需要启用 Web 管理界面 [Y/n] ："
+    read -r web <&1
+    case $web in
+        [yY][eE][sS] | [yY])
+            echo "您已确认需要启用 Web 管理界面 . . ."
+            PGM_WEB=true
+            printf "请输入管理员密码（如果不需要密码请直接回车）："
+            read -r admin_password <&1
+            printf "请输入外部端口（默认为3333）："
+            read -r external_port <&1
+            external_port=${external_port:-3333}
+            ;;
+        [nN][oO] | [nN])
+            ;;
+        *)
+            echo "输入错误，已跳过。"
+            ;;
+    esac
 }
+
 
 need_web_login () {
   PGM_WEB_LOGIN=false
@@ -95,7 +101,7 @@ start_docker () {
     echo "正在启动 Docker 容器 . . ."
     case $PGM_WEB in
         true)
-            docker run -dit --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=3333 -e WEB_LOGIN="$PGM_WEB_LOGIN" -p 3333:3333 teampgm/pagermaid_pyro <&1
+            docker run -dit --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=external_port -e WEB_LOGIN="$PGM_WEB_LOGIN" -p external_port:3333 teampgm/pagermaid_pyro <&1
             ;;
         *)
             docker run -dit --restart=always --name="$container_name" --hostname="$container_name" teampgm/pagermaid_pyro <&1
@@ -140,7 +146,7 @@ data_persistence () {
                     docker rm "$container_name" &>/dev/null
                     case $PGM_WEB in
                         true)
-                            docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=3333 -p 3333:3333 teampgm/pagermaid_pyro <&1
+                            docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=external_port -p external_port:3333 teampgm/pagermaid_pyro <&1
                             ;;
                         *)
                             docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" teampgm/pagermaid_pyro <&1
