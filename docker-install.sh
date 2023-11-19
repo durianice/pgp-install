@@ -101,7 +101,7 @@ start_docker () {
     echo "正在启动 Docker 容器 . . ."
     case $PGM_WEB in
         true)
-            docker run -dit --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=external_port -e WEB_LOGIN="$PGM_WEB_LOGIN" -p external_port:3333 teampgm/pagermaid_pyro <&1
+            docker run -dit --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=${external_port} -e WEB_LOGIN="$PGM_WEB_LOGIN" -p ${external_port}:3333 teampgm/pagermaid_pyro <&1
             ;;
         *)
             docker run -dit --restart=always --name="$container_name" --hostname="$container_name" teampgm/pagermaid_pyro <&1
@@ -146,7 +146,7 @@ data_persistence () {
                     docker rm "$container_name" &>/dev/null
                     case $PGM_WEB in
                         true)
-                            docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=external_port -p external_port:3333 teampgm/pagermaid_pyro <&1
+                            docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" -e WEB_ENABLE="$PGM_WEB" -e WEB_SECRET_KEY="$admin_password" -e WEB_HOST=0.0.0.0 -e WEB_PORT=${external_port} -p ${external_port}:3333 teampgm/pagermaid_pyro <&1
                             ;;
                         *)
                             docker run -dit -v "$data_path"/workdir:/pagermaid/workdir --restart=always --name="$container_name" --hostname="$container_name" teampgm/pagermaid_pyro <&1
