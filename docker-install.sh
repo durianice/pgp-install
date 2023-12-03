@@ -131,8 +131,8 @@ data_persistence () {
                 printf "请输入将数据保留在宿主机哪个路径（绝对路径），同时请确保该路径下没有名为 workdir 的文件夹 ："
                 read -r data_path <&1
                 if [ ! -d "$data_path" ]; then
-                    echo "路径 $data_path 不存在，请重新输入。"
-                    continue
+                    mkdir -p $data_path
+                    echo "路径 $data_path 不存在，以自动创建。"
                 fi
 
                 if [[ -z $container_name ]]; then
