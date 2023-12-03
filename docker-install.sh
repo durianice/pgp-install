@@ -132,7 +132,7 @@ data_persistence () {
                 read -r data_path <&1
                 if [ ! -d "$data_path" ]; then
                     mkdir -p $data_path
-                    echo "路径 $data_path 不存在，以自动创建。"
+                    echo "路径 $data_path 不存在，已自动创建。"
                 fi
 
                 if [[ -z $container_name ]]; then
@@ -155,6 +155,7 @@ data_persistence () {
                     echo
                     echo "数据持久化操作完成。"
                     echo
+                    exit 0
                     break
                 else
                     echo "不存在名为 $container_name 的容器，退出。"
